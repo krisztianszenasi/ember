@@ -1,0 +1,180 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-unix:
+    name: Build ${{ matrix.artifact_name }} artifact
+    runs-on: ${{ matrix.runs_on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: x64
+            runs_on: ubuntu-latest
+            artifact_name: ember-linux-x64
+            premake_install_mode: binary
+            setup_script: ./scripts/setup-linux-prerequisites.sh
+          - label: aarch64
+            runs_on: ubuntu-24.04-arm
+            artifact_name: ember-linux-aarch64
+            premake_install_mode: source
+            setup_script: ./scripts/setup-linux-prerequisites.sh
+          - label: arm64
+            runs_on: macos-15
+            artifact_name: ember-macos-arm64
+            setup_script: ./scripts/setup-macos-prerequisites.sh
+          - label: x64
+            runs_on: macos-15-intel
+            artifact_name: ember-macos-x64
+            setup_script: ./scripts/setup-macos-prerequisites.sh
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install build prerequisites
+        env:
+          PREMAKE_INSTALL_MODE: ${{ matrix.premake_install_mode }}
+        run: ${{ matrix.setup_script }}
+
+      - name: Build Ember
+        run: ./scripts/install.sh release
+
+      - name: Verify release binary
+        run: |
+          test -f bin/Release/ember-cli
+
+      - name: Create artifact directory
+        env:
+          ARTIFACT_NAME: ${{ matrix.artifact_name }}
+        run: |
+          mkdir -p "dist/$ARTIFACT_NAME/bin"
+          mkdir -p "dist/$ARTIFACT_NAME/examples"
+
+          cp bin/Release/ember-cli "dist/$ARTIFACT_NAME/bin/"
+
+          cp -r docs/examples/. "dist/$ARTIFACT_NAME/examples/"
+
+          cp LICENSE "dist/$ARTIFACT_NAME/"
+          cp README.md "dist/$ARTIFACT_NAME/"
+
+      - name: Package artifact
+        env:
+          ARTIFACT_NAME: ${{ matrix.artifact_name }}
+        run: |
+          cd dist
+          tar -czf "$ARTIFACT_NAME.tar.gz" "$ARTIFACT_NAME"
+
+      - name: Generate checksum
+        env:
+          ARTIFACT_NAME: ${{ matrix.artifact_name }}
+        run: |
+          cd dist
+          sha256sum "$ARTIFACT_NAME.tar.gz" > "$ARTIFACT_NAME.tar.gz.sha256"
+
+      - name: Upload GitHub Release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          fail_on_unmatched_files: true
+          files: |
+            dist/${{ matrix.artifact_name }}.tar.gz
+            dist/${{ matrix.artifact_name }}.tar.gz.sha256
+
+  build-windows:
+    name: Build ${{ matrix.artifact_name }} artifact
+    runs-on: ${{ matrix.runs_on }}
+    env:
+      PREMAKE_VERSION: 5.0.0-beta7
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runs_on: windows-latest
+            platform: x64
+            artifact_name: ember-windows-x64
+          - runs_on: windows-11-arm
+            platform: ARM64
+            artifact_name: ember-windows-arm64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install Premake
+        shell: pwsh
+        run: |
+          $premakeZip = "premake-$env:PREMAKE_VERSION-windows.zip"
+          $premakeUrl = "https://github.com/premake/premake-core/releases/download/v$env:PREMAKE_VERSION/$premakeZip"
+          $premakeDir = Join-Path $env:RUNNER_TEMP "premake"
+
+          Invoke-WebRequest -Uri $premakeUrl -OutFile $premakeZip
+          Expand-Archive -Path $premakeZip -DestinationPath $premakeDir -Force
+          "$premakeDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Install WinFlexBison
+        shell: pwsh
+        run: |
+          choco install winflexbison3 -y
+
+      - name: Build Ember
+        shell: pwsh
+        run: ./scripts/install.ps1 -Config Release -VsAction vs2022 -Platform ${{ matrix.platform }}
+
+      - name: Verify release binary
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "bin/Release/ember-cli.exe")) {
+              throw "Release binary was not found at bin/Release/ember-cli.exe"
+          }
+
+      - name: Create artifact directory
+        shell: pwsh
+        env:
+          ARTIFACT_NAME: ${{ matrix.artifact_name }}
+        run: |
+          New-Item -ItemType Directory -Force -Path "dist/$env:ARTIFACT_NAME/bin" | Out-Null
+          New-Item -ItemType Directory -Force -Path "dist/$env:ARTIFACT_NAME/examples" | Out-Null
+
+          Copy-Item "bin/Release/ember-cli.exe" "dist/$env:ARTIFACT_NAME/bin/"
+          Copy-Item "LICENSE" "dist/$env:ARTIFACT_NAME/"
+          Copy-Item "README.md" "dist/$env:ARTIFACT_NAME/"
+          Copy-Item "docs/examples/*" "dist/$env:ARTIFACT_NAME/examples/" -Recurse
+
+      - name: Package artifact
+        shell: pwsh
+        env:
+          ARTIFACT_NAME: ${{ matrix.artifact_name }}
+        run: |
+          Compress-Archive -Path "dist/$env:ARTIFACT_NAME" -DestinationPath "dist/$env:ARTIFACT_NAME.zip" -Force
+
+      - name: Generate checksum
+        shell: pwsh
+        env:
+          ARTIFACT_NAME: ${{ matrix.artifact_name }}
+        run: |
+          $hash = (Get-FileHash "dist/$env:ARTIFACT_NAME.zip" -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $env:ARTIFACT_NAME.zip" | Set-Content -NoNewline "dist/$env:ARTIFACT_NAME.zip.sha256"
+
+      - name: Upload GitHub Release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          fail_on_unmatched_files: true
+          files: |
+            dist/${{ matrix.artifact_name }}.zip
+            dist/${{ matrix.artifact_name }}.zip.sha256

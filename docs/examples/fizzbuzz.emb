@@ -1,0 +1,96 @@
+; FizzBuzz example
+;
+; Prints numbers from 1 to 100.
+; Multiples of 3 print "Fizz".
+; Multiples of 5 print "Buzz".
+; Multiples of both 3 and 5 print "FizzBuzz".
+
+.constants:
+    fizz = "Fizz"
+    buzz = "Buzz"
+    newline = "\n"
+
+.code:
+    func main(arity=0, locals=1):
+        ; local0 = counter
+        ldc 1
+        setl 0
+
+    @loop:
+        ; while counter <= 100
+        getl 0
+        ldc 100
+        lte
+        jmp_if_false end
+
+        ; Print the FizzBuzz value for the current counter.
+        getl 0
+        call print_fizzbuzz
+
+        ; counter = counter + 1
+        getl 0
+        ldc 1
+        iadd
+        setl 0
+
+        jmp loop
+
+    @end:
+        ret
+
+    ; Prints the correct FizzBuzz output for arg0.
+    func print_fizzbuzz(arity=1, locals=0):
+        ; if n % 15 == 0, print "FizzBuzz"
+        geta 0
+        ldc 15
+        irem
+        ldc 0
+        eq
+        jmp_if_false check_fizz
+
+        ldc fizz
+        ldc buzz
+        concat
+        ldc newline
+        concat
+        print
+        ret
+
+    @check_fizz:
+        ; if n % 3 == 0, print "Fizz"
+        geta 0
+        ldc 3
+        irem
+        ldc 0
+        eq
+        jmp_if_false check_buzz
+
+        ldc fizz
+        ldc newline
+        concat
+        print
+        ret
+
+    @check_buzz:
+        ; if n % 5 == 0, print "Buzz"
+        geta 0
+        ldc 5
+        irem
+        ldc 0
+        eq
+        jmp_if_false print_number
+
+        ldc buzz
+        ldc newline
+        concat
+        print
+        ret
+
+    @print_number:
+        ; Otherwise, print the number itself.
+        geta 0
+        i2s
+        ldc newline
+        concat
+        print
+        ret

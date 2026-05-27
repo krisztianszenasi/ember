@@ -1,0 +1,8 @@
+; Runtime error test: unexpected end of bytecode.
+;
+; This program intentionally ends after an incomplete instruction.
+; The VM should fail with an unexpected end-of-bytecode error.
+
+.code:
+    func main(arity=0, locals=0):
+        ldc 0

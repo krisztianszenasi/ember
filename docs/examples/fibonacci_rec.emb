@@ -1,0 +1,107 @@
+; Recursive Fibonacci example
+;
+; This program asks the user for a Fibonacci index,
+; computes the result recursively, and prints it.
+;
+; Example:
+;   Input: 6
+;   Output: 8
+
+.constants:
+    prompt = "Which Fibonacci number would you like to compute?\n"
+    input_prompt = "Input: "
+    output_message = "Output: "
+    error_message = "Please write a number!\n"
+
+.code:
+    func main(arity=0, locals=0):
+        ; Read a valid integer from the user.
+        call ask_for_input
+
+        ; Compute the Fibonacci number.
+        call fib
+
+        ; Print the result.
+        call write_output
+
+        ret
+
+    ; Prompts the user for a Fibonacci index.
+    ; Keeps asking until the input can be parsed as an integer.
+    func ask_for_input(arity=0, locals=0):
+        ldc prompt
+        print
+
+    @user_input:
+        ; Print the input prompt.
+        ldc input_prompt
+        print
+
+        ; Read input from stdin and try to convert it to an integer.
+        input
+        parse_int
+
+        ; Check whether parse_int succeeded.
+        status_ok
+        jmp_if_false error_handling
+
+        ; On success, the parsed integer remains on the stack.
+        ret
+
+    @error_handling:
+        ; Print an error message and ask again.
+        ldc error_message
+        print
+        jmp user_input
+
+    ; Computes fib(n) recursively.
+    ;
+    ; Argument:
+    ;   arg0 = n
+    ;
+    ; Returns:
+    ;   fib(n)
+    func fib(arity=1, locals=0):
+        ; if n < 2, return n
+        geta 0
+        ldc 2
+        gte
+        jmp_if_false early_exit
+
+        ; Compute fib(n - 2).
+        geta 0
+        ldc 2
+        isub
+        call fib
+
+        ; Compute fib(n - 1).
+        geta 0
+        ldc 1
+        isub
+        call fib
+
+        ; Return fib(n - 2) + fib(n - 1).
+        iadd
+        ret
+
+    @early_exit:
+        ; Base case: fib(0) = 0, fib(1) = 1
+        geta 0
+        ret
+
+    ; Prints the result in the format:
+    ; Output: <value>
+    func write_output(arity=1, locals=0):
+        ldc output_message
+
+        ; Convert the result integer to a string.
+        geta 0
+        i2s
+
+        ; Build the output message.
+        concat
+        ldc "\n"
+        concat
+
+        print
+        ret

@@ -1,0 +1,52 @@
+; Global counter example
+;
+; This example uses a global variable to count from 0 to 10.
+; The counter is stored globally, incremented in a function,
+; and printed on each loop iteration.
+
+.constants:
+    output = "Counter: "
+    newline = "\n"
+    increment_by = 1
+    until = 10
+
+.globals:
+    counter = 0
+
+.code:
+    func main(arity=0, locals=0):
+    @loop:
+        ; Continue while counter <= until.
+        getg counter
+        ldc until
+        lte
+        jmp_if_false done
+
+        ; Print the current counter value.
+        call print_global
+
+        ; Increment the global counter.
+        call increment_global
+
+        ; Repeat the loop.
+        jmp loop
+
+    @done:
+        ret
+
+    ; Increments the global counter by increment_by.
+    func increment_global(arity=0, locals=0):
+        getg counter
+        ldc increment_by
+        iadd
+        setg counter
+        ret
+
+    ; Prints the current value of the global counter.
+    func print_global(arity=0, locals=0):
+        getg counter
+        i2s
+        ldc newline
+        concat
+        print
+        ret

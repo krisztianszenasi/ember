@@ -1,0 +1,79 @@
+; Integer arithmetic end-to-end test.
+;
+; Expected output:
+; add: 3
+; sub: 17
+; mul: -70
+; div: -2
+; mixed: 6
+
+.constants:
+    add_label = "add: "
+    sub_label = "sub: "
+    mul_label = "mul: "
+    div_label = "div: "
+    mixed_label = "mixed: "
+    newline = "\n"
+
+.code:
+    func main(arity=0, locals=0):
+        ; 10 + -7 = 3
+        ldc add_label
+        ldc 10
+        ldc -7
+        iadd
+        i2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 10 - -7 = 17
+        ldc sub_label
+        ldc 10
+        ldc -7
+        isub
+        i2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 10 * -7 = -70
+        ldc mul_label
+        ldc 10
+        ldc -7
+        imul
+        i2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; -10 / 5 = -2
+        ldc div_label
+        ldc -10
+        ldc 5
+        idiv
+        i2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; ((10 + -7) * 10) / 5 = 6
+        ldc mixed_label
+        ldc 10
+        ldc -7
+        iadd
+        ldc 10
+        imul
+        ldc 5
+        idiv
+        i2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ret

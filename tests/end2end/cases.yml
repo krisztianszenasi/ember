@@ -1,0 +1,163 @@
+cases:
+  - name: helloworld
+    program: helloworld.emb
+    expected:
+      exit_code: 0
+      stdout: |
+        Hello, World!
+      stderr: ""
+
+  - name: integer_arithmetic
+    program: integer_arithmetic.emb
+    expected:
+      exit_code: 0
+      stdout: |
+        add: 3
+        sub: 17
+        mul: -70
+        div: -2
+        mixed: 6
+      stderr: ""
+
+  - name: float_arithmetic
+    program: float_arithmetic.emb
+    expected:
+      exit_code: 0
+      stdout: |
+        add: 3.5
+        sub: 6.5
+        mul: -15
+        div: -2.5
+        mixed: 6
+      stderr: ""
+
+  - name: comparisons
+    program: comparisons.emb
+    expected:
+      exit_code: 0
+      stdout: |
+        lt_true: true
+        lt_false: false
+        lte_equal: true
+        lte_less: true
+        lte_false: false
+        eq_true: true
+        eq_false: false
+        branch_true: taken
+        branch_false: skipped
+      stderr: ""
+
+  - name: variables_loop
+    program: variables_loop.emb
+    expected:
+      exit_code: 0
+      stdout: |
+        Output: 15
+      stderr: ""
+
+  - name: fionacci_it__10
+    program: fibonacci_it.emb
+    stdin: |
+      10
+    expected:
+      exit_code: 0
+      stdout: |
+        Output: 55
+
+  - name: fionacci_it__20
+    program: fibonacci_it.emb
+    stdin: |
+      20
+    expected:
+      exit_code: 0
+      stdout: |
+        Output: 6765
+
+  - name: fionacci_it__foo__10
+    program: fibonacci_it.emb
+    stdin: |
+      foo
+      10
+    expected:
+      exit_code: 0
+      stdout: |
+        Please write a number!
+        Output: 55
+
+  - name: fionacci_it__foo__20
+    program: fibonacci_it.emb
+    stdin: |
+      foo
+      20
+    expected:
+      exit_code: 0
+      stdout: |
+        Please write a number!
+        Output: 6765
+
+  - name: fionacci_rec__10
+    program: fibonacci_rec.emb
+    stdin: |
+      10
+    expected:
+      exit_code: 0
+      stdout: |
+        Output: 55
+
+  - name: fionacci_rec__20
+    program: fibonacci_rec.emb
+    stdin: |
+      20
+    expected:
+      exit_code: 0
+      stdout: |
+        Output: 6765
+
+  - name: fionacci_rec__foo__10
+    program: fibonacci_rec.emb
+    stdin: |
+      foo
+      10
+    expected:
+      exit_code: 0
+      stdout: |
+        Please write a number!
+        Output: 55
+
+  - name: fionacci_rec__foo__20
+    program: fibonacci_rec.emb
+    stdin: |
+      foo
+      20
+    expected:
+      exit_code: 0
+      stdout: |
+        Please write a number!
+        Output: 6765
+
+  - name: strings_concat
+    program: strings_concat.emb
+    expected:
+      exit_code: 0
+      stdout: |
+        Hello, Ember!
+        answer: 42
+        count: 10/20
+      stderr: ""
+
+  - name: stack_underflow
+    program: stack_underflow.emb
+    expected:
+      exit_code: 1
+      stdout: ""
+      stderr: |
+        ember: error: process failed: stack underflow
+
+  - name: unexpected_end_of_bytecode
+    program: unexpected_end_of_bytecode.emb
+    expected:
+      exit_code: 1
+      stdout: ""
+      stderr: |
+        ember: error: process failed: unexpected end of bytecode
+

@@ -1,0 +1,6 @@
+; Runtime error test: stack underflow.
+
+.code:
+    func main(arity=0, locals=0):
+        pop 1
+        ret

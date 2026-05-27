@@ -1,0 +1,76 @@
+.constants:
+    output_message = "Output: "
+    error_message = "Please write a number!\n"
+
+.code:
+    func main(arity=0, locals=0):
+        call ask_for_input
+        call fib
+        call write_output
+        ret
+
+    func ask_for_input(arity=0, locals=0):
+    @user_input:
+        input
+        parse_int
+        status_ok
+        jmp_if_false error_handling
+        ret
+
+    @error_handling:
+        ldc error_message
+        print
+        jmp user_input
+
+    ; Computes fib(n) iteratively.
+    ;
+    ; Argument:
+    ;   arg0 = n
+    ;
+    ; Returns:
+    ;   fib(n)
+    func fib(arity=1, locals=3):
+        ldc 0
+        setl 0      ; a = 0
+
+        ldc 1
+        setl 1      ; b = 1
+
+        ldc 0
+        setl 2      ; i = 0
+
+    @loop:
+        getl 2      ; i
+        geta 0      ; n
+        lt          ; i < n
+        jmp_if_false done
+
+        getl 0      ; a
+        getl 1      ; b
+        iadd        ; next = a + b
+
+        getl 1
+        setl 0      ; a = b
+
+        setl 1      ; b = next
+
+        getl 2
+        ldc 1
+        iadd
+        setl 2      ; i += 1
+
+        jmp loop
+
+    @done:
+        getl 0
+        ret
+
+    func write_output(arity=1, locals=0):
+        ldc output_message
+        geta 0
+        i2s
+        concat
+        ldc "\n"
+        concat
+        print
+        ret

@@ -1,0 +1,75 @@
+.constants:
+    output_message = "Output: "
+    error_message = "Please write a number!\n"
+
+.code:
+    func main(arity=0, locals=0):
+        call ask_for_input
+        call function_call_bench
+        call write_output
+        ret
+
+    func ask_for_input(arity=0, locals=0):
+    @user_input:
+        input
+        parse_int
+        status_ok
+        jmp_if_false error_handling
+        ret
+
+    @error_handling:
+        ldc error_message
+        print
+        jmp user_input
+
+    ; Argument:
+    ;   arg0 = x
+    ;
+    ; Returns:
+    ;   x + 1
+    func add_one(arity=1, locals=0):
+        geta 0
+        ldc 1
+        iadd
+        ret
+
+    ; Computes:
+    ;   i = 0
+    ;   while i < n:
+    ;       i = add_one(i)
+    ;   return i
+    ;
+    ; Argument:
+    ;   arg0 = n
+    ;
+    ; Returns:
+    ;   n
+    func function_call_bench(arity=1, locals=1):
+        ldc 0
+        setl 0      ; i = 0
+
+    @loop:
+        getl 0      ; i
+        geta 0      ; n
+        lt
+        jmp_if_false done
+
+        getl 0
+        call add_one
+        setl 0      ; i = add_one(i)
+
+        jmp loop
+
+    @done:
+        getl 0
+        ret
+
+    func write_output(arity=1, locals=0):
+        ldc output_message
+        geta 0
+        i2s
+        concat
+        ldc "\n"
+        concat
+        print
+        ret

@@ -1,0 +1,10 @@
+; Prints "Hello, World!"
+
+.constants:
+    greeting = "Hello, World!\n"
+
+.code:
+    func main(arity=0, locals=0):
+        ldc greeting
+        print
+        ret

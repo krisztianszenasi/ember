@@ -1,0 +1,56 @@
+; Local variables and loop end-to-end test.
+;
+; Tests:
+;   setl
+;   getl
+;   iadd
+;   lte
+;   jmp_if_false
+;   jmp
+;
+; Expected output:
+; Output: 15
+
+.constants:
+    output_message = "Output: "
+    newline = "\n"
+
+.code:
+    func main(arity=0, locals=2):
+        ; local 0 = sum
+        ; local 1 = i
+
+        ldc 0
+        setl 0      ; sum = 0
+
+        ldc 1
+        setl 1      ; i = 1
+
+    @loop:
+        getl 1      ; i
+        ldc 5
+        lte         ; i <= 5
+        jmp_if_false done
+
+        getl 0      ; sum
+        getl 1      ; i
+        iadd
+        setl 0      ; sum = sum + i
+
+        getl 1      ; i
+        ldc 1
+        iadd
+        setl 1      ; i = i + 1
+
+        jmp loop
+
+    @done:
+        ldc output_message
+        getl 0
+        i2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ret

@@ -1,0 +1,58 @@
+; String concatenation end-to-end test.
+;
+; Tests:
+;   string constants
+;   i2s
+;   concat
+;   print
+;
+; Expected output:
+; Hello, Ember!
+; answer: 42
+; count: 10/20
+
+.constants:
+    hello = "Hello, "
+    ember = "Ember"
+    bang = "!"
+    answer_label = "answer: "
+    count_label = "count: "
+    slash = "/"
+    newline = "\n"
+
+.code:
+    func main(arity=0, locals=0):
+        ; "Hello, " + "Ember" + "!"
+        ldc hello
+        ldc ember
+        concat
+        ldc bang
+        concat
+        ldc newline
+        concat
+        print
+
+        ; "answer: " + 42
+        ldc answer_label
+        ldc 42
+        i2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; "count: " + 10 + "/" + 20
+        ldc count_label
+        ldc 10
+        i2s
+        concat
+        ldc slash
+        concat
+        ldc 20
+        i2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ret

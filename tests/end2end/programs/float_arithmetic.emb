@@ -1,0 +1,79 @@
+; Floating-point arithmetic end-to-end test.
+;
+; Expected output:
+; add: 3.5
+; sub: 6.5
+; mul: -15
+; div: -2.5
+; mixed: 6
+
+.constants:
+    add_label = "add: "
+    sub_label = "sub: "
+    mul_label = "mul: "
+    div_label = "div: "
+    mixed_label = "mixed: "
+    newline = "\n"
+
+.code:
+    func main(arity=0, locals=0):
+        ; 1.5 + 2.0 = 3.5
+        ldc add_label
+        ldc 1.5
+        ldc 2.0
+        fadd
+        f2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 4.0 - -2.5 = 6.5
+        ldc sub_label
+        ldc 4.0
+        ldc -2.5
+        fsub
+        f2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 6.0 * -2.5 = -15
+        ldc mul_label
+        ldc 6.0
+        ldc -2.5
+        fmul
+        f2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; -10.0 / 4.0 = -2.5
+        ldc div_label
+        ldc -10.0
+        ldc 4.0
+        fdiv
+        f2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; ((10.0 + -7.0) * 10.0) / 5.0 = 6.0
+        ldc mixed_label
+        ldc 10.0
+        ldc -7.0
+        fadd
+        ldc 10.0
+        fmul
+        ldc 5.0
+        fdiv
+        f2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ret

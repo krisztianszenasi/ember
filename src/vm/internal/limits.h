@@ -1,0 +1,7 @@
+#ifndef VM_INTERNAL_LIMITS_H
+#define VM_INTERNAL_LIMITS_H
+
+#define EMBER_VM_STACK_MAX       4096
+#define EMBER_VM_CALL_FRAME_MAX  1024
+
+#endif

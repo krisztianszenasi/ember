@@ -1,0 +1,145 @@
+; Comparison end-to-end test.
+;
+; Expected output:
+; lt_true: true
+; lt_false: false
+; lte_equal: true
+; lte_less: true
+; lte_false: false
+; eq_true: true
+; eq_false: false
+; branch_true: taken
+; branch_false: skipped
+
+.constants:
+    lt_true_label = "lt_true: "
+    lt_false_label = "lt_false: "
+    lte_equal_label = "lte_equal: "
+    lte_less_label = "lte_less: "
+    lte_false_label = "lte_false: "
+    eq_true_label = "eq_true: "
+    eq_false_label = "eq_false: "
+    branch_true_label = "branch_true: "
+    branch_false_label = "branch_false: "
+    taken = "taken"
+    skipped = "skipped"
+    newline = "\n"
+
+.code:
+    func main(arity=0, locals=0):
+        ; 3 < 5 = true
+        ldc lt_true_label
+        ldc 3
+        ldc 5
+        lt
+        b2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 5 < 3 = false
+        ldc lt_false_label
+        ldc 5
+        ldc 3
+        lt
+        b2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 5 <= 5 = true
+        ldc lte_equal_label
+        ldc 5
+        ldc 5
+        lte
+        b2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 3 <= 5 = true
+        ldc lte_less_label
+        ldc 3
+        ldc 5
+        lte
+        b2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 5 <= 3 = false
+        ldc lte_false_label
+        ldc 5
+        ldc 3
+        lte
+        b2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 42 == 42 = true
+        ldc eq_true_label
+        ldc 42
+        ldc 42
+        eq
+        b2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; 42 == 41 = false
+        ldc eq_false_label
+        ldc 42
+        ldc 41
+        eq
+        b2s
+        concat
+        ldc newline
+        concat
+        print
+
+        ; Branch should be taken.
+        ldc branch_true_label
+        ldc 1
+        ldc 2
+        lt
+        jmp_if_false branch_true_else
+
+        ldc taken
+        jmp branch_true_done
+
+    @branch_true_else:
+        ldc skipped
+
+    @branch_true_done:
+        concat
+        ldc newline
+        concat
+        print
+
+        ; Branch should go to false path.
+        ldc branch_false_label
+        ldc 2
+        ldc 1
+        lt
+        jmp_if_false branch_false_else
+
+        ldc taken
+        jmp branch_false_done
+
+    @branch_false_else:
+        ldc skipped
+
+    @branch_false_done:
+        concat
+        ldc newline
+        concat
+        print
+
+        ret
