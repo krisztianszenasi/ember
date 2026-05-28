@@ -42,7 +42,7 @@ void yyerror(struct EmberParserContext *ctx, const char *s);
     char *str_val;
 }
 
-%token FUNC ARITY LOCALS
+%token FUNC ARITY LOCALS NONE
 
 %token <opcode> OPCODE
 %token <str_val> IDENTIFIER
@@ -128,6 +128,7 @@ literal
     |   FLOAT   { $$ = ember_ast_float_literal($1, YYLTYPE_TO_SOURCE_SPAN(@1)); }
     |   INT     { $$ = ember_ast_int_literal($1, YYLTYPE_TO_SOURCE_SPAN(@1)); }
     |   STRING  { $$ = ember_ast_str_literal($1, YYLTYPE_TO_SOURCE_SPAN(@1)); }
+    |   NONE    { $$ = ember_ast_none_literal(YYLTYPE_TO_SOURCE_SPAN(@1)); }
     ;
 
 func_header

@@ -1,0 +1,34 @@
+.constants:
+    EMPTY = none
+    NEWLINE = "\n"
+
+.code:
+    func main(arity=0, locals=0):
+        ldc none
+        n2s
+        ldc NEWLINE
+        concat
+        print
+
+        ldc EMPTY
+        n2s
+        ldc NEWLINE
+        concat
+        print
+
+        ldc none
+        ldc none
+        eq
+        b2s
+        ldc NEWLINE
+        concat
+        print
+
+        ldc none
+        n2b
+        b2s
+        ldc NEWLINE
+        concat
+        print
+
+        halt

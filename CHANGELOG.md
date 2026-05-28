@@ -1,6 +1,13 @@
 # Changelog
 
-## [0.1.0] - 2026-05-27
+## [v0.1.1] - 2026-05-28
+
+### Added
+
+- Added first-class `none` literal support.
+- Added test coverage for `none` literal assembly/value behavior.
+
+## [v0.1.0] - 2026-05-27
 
 Initial release of Ember.
 

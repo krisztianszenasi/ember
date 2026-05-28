@@ -133,6 +133,8 @@ static struct EmberValue lower_value(struct EmberIrValue *value) {
             return EV_FLOAT(value->as.float_val);
         case IR_VALUE_INT:
             return EV_INT(value->as.int_val);
+        case IR_VALUE_NONE:
+            return EV_NONE();
         case IR_VALUE_STR:
             return EO_STR(value->as.str_val);
     }

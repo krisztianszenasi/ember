@@ -14,6 +14,7 @@ enum EmberAstLiteralKind {
     AST_LITERAL_BOOLEAN,
     AST_LITERAL_FLOAT,
     AST_LITERAL_INT,
+    AST_LITERAL_NONE,
     AST_LITERAL_STR,
 };
 
@@ -128,6 +129,24 @@ static inline struct EmberAstLiteral *ember_ast_int_literal_new(
     self->kind = AST_LITERAL_INT;
     self->as.int_val = value;
     return self;
+}
+
+/**
+ * Creates and initializes a none literal node.
+ *
+ * @param source_span Source span associated with the literal.
+ * @return An initialized none literal node.
+ */
+static inline struct EmberAstLiteral ember_ast_none_literal(
+    struct EmberSourceSpan source_span
+) {
+    return (struct EmberAstLiteral){
+        .base = {
+            .kind = AST_NODE_LITERAL,
+            .source_span = source_span
+        },
+        .kind = AST_LITERAL_NONE,
+    };
 }
 
 /**

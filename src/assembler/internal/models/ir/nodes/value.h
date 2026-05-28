@@ -16,6 +16,7 @@ enum EmberIrValueKind {
     IR_VALUE_BOOLEAN,
     IR_VALUE_FLOAT,
     IR_VALUE_INT,
+    IR_VALUE_NONE,
     IR_VALUE_STR,
 };
 
@@ -78,6 +79,19 @@ ember_ir_int_value(int64_t value) {
     ember_ir_node_init(&self.base, IR_NODE_VALUE, EMBER_SOURCE_SPAN_NONE);
     self.kind = IR_VALUE_INT;
     self.as.int_val = value;
+    return self;
+}
+
+/**
+ * Creates and initializes a none IR value.
+ *
+ * @return An initialized none IR value.
+ */
+static inline struct EmberIrValue
+ember_ir_none_value(void) {
+    struct EmberIrValue self;
+    ember_ir_node_init(&self.base, IR_NODE_VALUE, EMBER_SOURCE_SPAN_NONE);
+    self.kind = IR_VALUE_NONE;
     return self;
 }
 

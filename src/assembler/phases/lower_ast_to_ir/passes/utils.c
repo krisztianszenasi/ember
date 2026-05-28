@@ -16,6 +16,9 @@ struct EmberIrValue convert_ast_literal_to_ir_value(
         case AST_LITERAL_INT:
             value = ember_ir_int_value(literal->as.int_val);
             break;
+        case AST_LITERAL_NONE:
+            value = ember_ir_none_value();
+            break;
         case AST_LITERAL_STR:
             value = ember_ir_str_value(literal->as.str_val);
             break;

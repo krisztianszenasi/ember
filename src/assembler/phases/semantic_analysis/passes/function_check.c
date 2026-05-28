@@ -226,6 +226,8 @@ static enum EmberAssemblyValueKind value_kind_from_literal(
             return EMBER_VALUE_FLOAT;
         case AST_LITERAL_INT:
             return EMBER_VALUE_INT;
+        case AST_LITERAL_NONE:
+            return EMBER_VALUE_NONE;
         case AST_LITERAL_STR:
             return EMBER_VALUE_STRING;
     }
