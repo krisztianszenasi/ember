@@ -145,6 +145,17 @@ cases:
         count: 10/20
       stderr: ""
 
+  - name: none_literals
+    program: none_literals.emb
+    expected:
+      exit_code: 0
+      stdout: |
+        none
+        none
+        true
+        false
+      stderr: ""
+
   - name: stack_underflow
     program: stack_underflow.emb
     expected:
@@ -160,4 +171,3 @@ cases:
       stdout: ""
       stderr: |
         ember: error: process failed: unexpected end of bytecode
-

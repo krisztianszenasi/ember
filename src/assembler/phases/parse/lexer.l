@@ -317,6 +317,10 @@
     RETURN_TOKEN(BOOLEAN);
 }
 
+"none" {
+    RETURN_TOKEN(NONE);
+}
+
 \"([^\"\\\n]|\\.)*\" {
     SET_LOC();
     yycolumn += yyleng;

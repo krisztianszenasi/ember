@@ -143,6 +143,8 @@ static const char *_value_kind_name(enum EmberAssemblyValueKind kind)
             return "string";
         case EMBER_VALUE_BOOL:
             return "bool";
+        case EMBER_VALUE_NONE:
+            return "none";
     }
 
     return "unknown";

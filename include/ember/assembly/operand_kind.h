@@ -69,6 +69,11 @@ enum EmberAssemblyValueKind {
      * @brief Boolean value.
      */
     EMBER_VALUE_BOOL,
+
+    /**
+     * @brief None value.
+     */
+    EMBER_VALUE_NONE,
 };
 
 #endif
