@@ -156,6 +156,14 @@ cases:
         false
       stderr: ""
 
+  - name: reused_label_names
+    program: reused_label_names.emb
+    expected:
+      exit_code: 0
+      stdout: |
+        ok
+      stderr: ""
+
   - name: stack_underflow
     program: stack_underflow.emb
     expected:

@@ -1,0 +1,42 @@
+; Reusing label names across functions must not corrupt later bytecode.
+
+.code:
+    func first(arity=0, locals=1):
+    @entry0:
+        ldc 0
+        setl 0
+        jmp while_cond1
+    @while_cond1:
+        jmp while_body2
+    @while_body2:
+        getl 0
+        ldc 1
+        iadd
+        setl 0
+        getl 0
+        ldc 3
+        lt
+        jmp_if_false while_join3
+        jmp while_body2
+    @while_join3:
+        ret
+
+    func second(arity=0, locals=2):
+    @entry0:
+        ldc 0.0
+        setl 0
+        ldc 0.001
+        setl 1
+        ldc "ok\n"
+        print
+        jmp while_cond1
+    @while_cond1:
+        jmp while_body2
+    @while_body2:
+        ret
+
+    func main(arity=0, locals=0):
+    @entry0:
+        call first
+        call second
+        ret
