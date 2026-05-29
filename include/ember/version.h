@@ -14,7 +14,7 @@
 /**
  * @brief Ember patch version number.
  */
-#define EMBER_VERSION_PATCH 1
+#define EMBER_VERSION_PATCH 2
 
 /**
  * @brief Ember build flavor.

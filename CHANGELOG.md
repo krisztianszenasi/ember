@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.1.2] - 2026-05-29
+
+### Fixed
+
+- Fixed bytecode corruption caused by stale label patch entries being reused across function bodies.
+- Cleared the patch table between function bodies so label resolution only patches locations belonging to the current function.
+
+### Added
+
+- Added end-to-end test coverage for reused label names across function bodies.
+
 ## [v0.1.1] - 2026-05-28
 
 ### Added
