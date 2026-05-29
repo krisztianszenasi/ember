@@ -19,8 +19,8 @@
 
 struct GenerateFunctionsContext {
     struct EmberGenerateExeContext *main_context;
-    struct EmberPatchTable *patch_table;
     struct EmberFunction *current_function;
+    struct EmberPatchTable *patch_table;
 };
 
 static inline struct GenerateFunctionsContext *
@@ -152,6 +152,7 @@ static void generate_function_visit(
     struct EmberIrFunction *node
 ) {
     struct GenerateFunctionsContext *context = subcontext(self);
+    struct EmberPatchTable *patch_table = ember_patch_table_new();
 
     context->current_function = ember_executable_define_function(
         context->main_context->out_exe,
@@ -168,9 +169,11 @@ static void generate_function_visit(
             node->name
         );
         exe_gen_fatal(main_context(self));
+        ember_patch_table_destroy(patch_table);
         return;
     }
 
+    context->patch_table = patch_table;
     enter_function_scope(context);
 
     for (size_t i = 0; i < node->code_item_count; i++) {
@@ -182,6 +185,8 @@ static void generate_function_visit(
     }
 
     exit_function_scope(context);
+    ember_patch_table_destroy(patch_table);
+    context->patch_table = NULL;
     context->current_function = NULL;
 }
 
@@ -433,19 +438,9 @@ void do_generate_functions_pass(
 
     struct GenerateFunctionsContext subcontext = {
         .main_context = ctx,
-        .patch_table = ember_patch_table_new(),
         .current_function = NULL,
+        .patch_table = NULL,
     };
-
-    if (subcontext.patch_table == NULL) {
-        EMBER_ERROR_AT(
-            ctx->logger,
-            EMBER_SOURCE_SPAN_NONE,
-            "failed to allocate patch table during executable generation"
-        );
-        exe_gen_fatal(ctx);
-        return;
-    }
 
     struct EmberIrVisitor visitor;
     ember_ir_visitor_init(
@@ -457,6 +452,4 @@ void do_generate_functions_pass(
     );
 
     visitor.vtable.visit_ir_node(&visitor, root);
-
-    ember_patch_table_destroy(subcontext.patch_table);
 }
